@@ -1,0 +1,26 @@
+version: 0.2
+
+env:
+  variables:
+    JAVA_HOME: "/usr/lib/jvm/java-8-openjdk-amd64"
+
+phases:
+  install:
+    commands:
+    - echo installing maven...
+    - apt-get update -y
+    - apt-get install -y maven
+  build:
+    commands:
+    - echo building the springmvc-stand-alone
+    - mvn clean
+    - mvn install
+artifacts:
+  files:
+  - 'Dockerfile'
+  - target/*.war
+  discard-paths: yes
+
+cache:
+  paths:
+  - '/root/.m2/**/*'
