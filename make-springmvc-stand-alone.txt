@@ -1,0 +1,30 @@
+https://medium.com/trainingcenter/docker-maven-springmvc-tomcat-60cdf9901bb9
+
+git clone https://github.com/rogeriofonseca/springmvc-stand-alone.git
+
+###############Dockerfile###############
+FROM maven:3.3-jdk-8 as builder
+COPY . /usr/src/mymaven
+VOLUME m2_data:/root/.m2/
+WORKDIR /usr/src/mymaven
+RUN mvn clean install -f /usr/src/mymaven && mkdir /usr/src/wars/
+RUN find /usr/src/mymaven/ -iname '*.war' -exec cp {} /usr/src/wars/ \;
+
+FROM tomcat:7.0.90-jre8
+COPY --from=builder /usr/src/wars/* /usr/local/tomcat/webapps/
+COPY tomcat-users.xml $CATALINA_HOME/conf/
+###############Dockerfile###############
+
+
+docker build -t rogeriofonseca/tomcat-server:1.0 . && docker run -p 8383:8080 --rm -it rogeriofonseca/tomcat-server:1.0
+
+
+http://localhost:8383/springmvc-stand-alone/
+
+/springmvc-stand-alone-website
+
+$(aws ecr get-login --no-include-email --region us-east-1)
+docker build -t springmvc-stand-alone .
+docker tag springmvc-stand-alone:latest 604773387822.dkr.ecr.us-east-1.amazonaws.com/springmvc-stand-alone:latest
+docker push 604773387822.dkr.ecr.us-east-1.amazonaws.com/springmvc-stand-alone:latest
+
